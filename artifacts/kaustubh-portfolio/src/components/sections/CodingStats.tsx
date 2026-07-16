@@ -17,7 +17,7 @@ export function CodingStats() {
   const [isRefreshing, setIsRefreshing] = useState(false);
   
   const [lcStats, setLcStats] = useState({
-    solved: "150+", easy: 85, medium: 55, hard: 10,
+    solved: 150, solvedDisplay: "150+", easy: 85, medium: 55, hard: 10,
     totalEasy: 954, totalMedium: 2084, totalHard: 953,
     rating: 1423, topPercentage: 35.5,
     chart: [
@@ -140,7 +140,7 @@ export function CodingStats() {
 
             <div className="flex flex-wrap items-end gap-4 mb-8 border-b border-white/10 pb-6">
               <div>
-                <span className="text-5xl font-bold text-emerald-400">{lcStats.solved}</span>
+                <span className="text-5xl font-bold text-emerald-400">{(lcStats as any).solvedDisplay || lcStats.solved}</span>
                 <span className="text-gray-500 font-mono text-sm ml-2">solved</span>
               </div>
               <div className="mb-1">

@@ -1,4 +1,9 @@
 {
+  "build": {
+    "env": {
+      "ENABLE_EXPERIMENTAL_COREPACK": "1"
+    }
+  },
   "buildCommand": "pnpm run build",
   "outputDirectory": "artifacts/kaustubh-portfolio/dist",
   "framework": "vite",
