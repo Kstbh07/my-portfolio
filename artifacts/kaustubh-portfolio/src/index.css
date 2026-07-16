@@ -1,0 +1,207 @@
+@import url('https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800;900&family=Space+Mono:ital,wght@0,400;0,700;1,400;1,700&display=swap');
+@import 'tailwindcss';
+@import 'tw-animate-css';
+@plugin "@tailwindcss/typography";
+
+@custom-variant dark (&:is(.dark *));
+
+@theme inline {
+  --color-background: hsl(var(--background));
+  --color-foreground: hsl(var(--foreground));
+  --color-border: hsl(var(--border));
+  --color-input: hsl(var(--input));
+  --color-ring: hsl(var(--ring));
+
+  --color-card: hsl(var(--card));
+  --color-card-foreground: hsl(var(--card-foreground));
+  --color-card-border: hsl(var(--card-border));
+
+  --color-popover: hsl(var(--popover));
+  --color-popover-foreground: hsl(var(--popover-foreground));
+  --color-popover-border: hsl(var(--popover-border));
+
+  --color-primary: hsl(var(--primary));
+  --color-primary-foreground: hsl(var(--primary-foreground));
+  --color-primary-border: var(--primary-border);
+
+  --color-secondary: hsl(var(--secondary));
+  --color-secondary-foreground: hsl(var(--secondary-foreground));
+  --color-secondary-border: var(--secondary-border);
+
+  --color-muted: hsl(var(--muted));
+  --color-muted-foreground: hsl(var(--muted-foreground));
+  --color-muted-border: var(--muted-border);
+
+  --color-accent: hsl(var(--accent));
+  --color-accent-foreground: hsl(var(--accent-foreground));
+  --color-accent-border: var(--accent-border);
+
+  --color-destructive: hsl(var(--destructive));
+  --color-destructive-foreground: hsl(var(--destructive-foreground));
+  --color-destructive-border: var(--destructive-border);
+
+  --font-sans: var(--app-font-sans);
+  --font-mono: var(--app-font-mono);
+
+  --radius-sm: calc(var(--radius) - 4px);
+  --radius-md: calc(var(--radius) - 2px);
+  --radius-lg: var(--radius);
+  --radius-xl: calc(var(--radius) + 4px);
+}
+
+:root {
+  --app-font-sans: 'Outfit', sans-serif;
+  --app-font-mono: 'Space Mono', monospace;
+  --radius: 0.5rem;
+
+  --background: 270 15% 4%; /* Very dark purple-black */
+  --foreground: 270 10% 90%;
+
+  --border: 270 30% 15%;
+  --input: 270 30% 15%;
+  --ring: 270 70% 60%;
+
+  --card: 270 15% 6%;
+  --card-foreground: 270 10% 90%;
+  --card-border: 270 30% 15%;
+
+  --popover: 270 15% 5%;
+  --popover-foreground: 270 10% 90%;
+  --popover-border: 270 30% 15%;
+
+  --primary: 270 70% 60%; /* Neon purple */
+  --primary-foreground: 0 0% 100%;
+  --primary-border: 270 70% 60%;
+
+  --secondary: 270 20% 12%;
+  --secondary-foreground: 270 10% 90%;
+  --secondary-border: 270 20% 20%;
+
+  --muted: 270 20% 10%;
+  --muted-foreground: 270 15% 60%;
+  --muted-border: 270 20% 15%;
+
+  --accent: 270 50% 25%;
+  --accent-foreground: 270 10% 90%;
+  --accent-border: 270 50% 35%;
+
+  --destructive: 0 84.2% 60.2%;
+  --destructive-foreground: 0 0% 98%;
+  --destructive-border: 0 84.2% 60.2%;
+}
+
+.dark {
+  --background: 270 15% 4%; /* Very dark purple-black */
+  --foreground: 270 10% 90%;
+
+  --border: 270 30% 15%;
+  --input: 270 30% 15%;
+  --ring: 270 70% 60%;
+
+  --card: 270 15% 6%;
+  --card-foreground: 270 10% 90%;
+  --card-border: 270 30% 15%;
+
+  --popover: 270 15% 5%;
+  --popover-foreground: 270 10% 90%;
+  --popover-border: 270 30% 15%;
+
+  --primary: 270 70% 60%; /* Neon purple */
+  --primary-foreground: 0 0% 100%;
+  --primary-border: 270 70% 60%;
+
+  --secondary: 270 20% 12%;
+  --secondary-foreground: 270 10% 90%;
+  --secondary-border: 270 20% 20%;
+
+  --muted: 270 20% 10%;
+  --muted-foreground: 270 15% 60%;
+  --muted-border: 270 20% 15%;
+
+  --accent: 270 50% 25%;
+  --accent-foreground: 270 10% 90%;
+  --accent-border: 270 50% 35%;
+
+  --destructive: 0 84.2% 60.2%;
+  --destructive-foreground: 0 0% 98%;
+  --destructive-border: 0 84.2% 60.2%;
+}
+
+@layer base {
+  * {
+    @apply border-border;
+  }
+
+  body {
+    @apply font-sans antialiased bg-background text-foreground overflow-x-hidden;
+    cursor: none; /* For custom cursor */
+  }
+
+  /* Custom Scrollbar for non-lenis fallback */
+  ::-webkit-scrollbar {
+    width: 6px;
+  }
+  ::-webkit-scrollbar-track {
+    background: hsl(var(--background));
+  }
+  ::-webkit-scrollbar-thumb {
+    background: hsl(var(--border));
+    border-radius: 3px;
+  }
+  ::-webkit-scrollbar-thumb:hover {
+    background: hsl(var(--primary));
+  }
+}
+
+.text-gradient-purple {
+  @apply bg-clip-text text-transparent bg-gradient-to-r from-[#9333ea] via-[#c084fc] to-[#e879f9];
+}
+
+.glass-card {
+  @apply bg-background/40 backdrop-blur-md border border-white/5 shadow-[0_0_15px_rgba(168,85,247,0.05)];
+}
+
+.neon-border {
+  @apply border border-primary/30 shadow-[0_0_10px_rgba(168,85,247,0.2)];
+}
+
+.neon-text {
+  text-shadow: 0 0 10px rgba(168, 85, 247, 0.5), 0 0 20px rgba(168, 85, 247, 0.3);
+}
+
+.lenis.lenis-smooth {
+  scroll-behavior: auto !important;
+}
+
+.lenis.lenis-smooth [data-lenis-prevent] {
+  overscroll-behavior: contain;
+}
+
+.lenis.lenis-stopped {
+  overflow: hidden;
+}
+
+.lenis.lenis-scrolling iframe {
+  pointer-events: none;
+}
+
+.transform-style-3d {
+  transform-style: preserve-3d;
+}
+
+.translate-z-64 {
+  transform: translateZ(64px);
+}
+
+.perspective-1000 {
+  perspective: 1000px;
+}
+
+@keyframes scan {
+  0% { transform: translateY(-100%); }
+  100% { transform: translateY(400%); }
+}
+
+.animate-scan {
+  animation: scan 2s linear infinite;
+}

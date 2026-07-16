@@ -1,0 +1,27 @@
+kind = "web"
+previewPath = "/"
+title = "Kaustubh Sen — Portfolio"
+version = "1.0.0"
+id = "artifacts/kaustubh-portfolio"
+router = "path"
+
+[[services]]
+name = "web"
+paths = [ "/" ]
+localPort = 25002
+
+[services.development]
+run = "pnpm --filter @workspace/kaustubh-portfolio run dev"
+
+[services.production]
+build = [ "pnpm", "--filter", "@workspace/kaustubh-portfolio", "run", "build" ]
+serve = "static"
+publicDir = "artifacts/kaustubh-portfolio/dist/public"
+
+[[services.production.rewrites]]
+from = "/*"
+to = "/index.html"
+
+[services.env]
+PORT = "25002"
+BASE_PATH = "/"
