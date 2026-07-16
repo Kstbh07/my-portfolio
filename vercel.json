@@ -5,7 +5,7 @@
     }
   },
   "buildCommand": "pnpm run build",
-  "outputDirectory": "artifacts/kaustubh-portfolio/dist",
+  "outputDirectory": "artifacts/kaustubh-portfolio/dist/public",
   "framework": "vite",
   "rewrites": [
     {
