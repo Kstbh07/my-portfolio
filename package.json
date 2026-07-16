@@ -13,11 +13,5 @@
     "prettier": "^3.9.4",
     "typescript": "~5.9.3"
   },
-  "pnpm": {
-    "onlyBuiltDependencies": [
-      "esbuild",
-      "@tailwindcss/oxide",
-      "lightningcss"
-    ]
-  }
+  "packageManager": "pnpm@11.13.0"
 }
