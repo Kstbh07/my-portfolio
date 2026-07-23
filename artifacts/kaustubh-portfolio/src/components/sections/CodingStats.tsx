@@ -76,11 +76,11 @@ function CodeforcesCard() {
 
   if (loading) {
     return (
-      <div className="rounded-lg border border-white/8 bg-[#0d1117]/50 backdrop-blur-sm p-5 h-full">
-        <Skeleton style={{ minHeight: 40, width: '60%', marginBottom: 12 }} />
-        <Skeleton style={{ minHeight: 20, width: '80%', marginBottom: 8 }} />
-        <Skeleton style={{ minHeight: 20, width: '70%', marginBottom: 8 }} />
-        <Skeleton style={{ minHeight: 20, width: '50%' }} />
+      <div className="rounded-lg border border-white/8 bg-[#0d1117]/50 backdrop-blur-sm p-6 lg:p-8 h-full flex flex-col justify-center">
+        <Skeleton style={{ minHeight: 48, width: '60%', marginBottom: 16 }} />
+        <Skeleton style={{ minHeight: 24, width: '80%', marginBottom: 10 }} />
+        <Skeleton style={{ minHeight: 24, width: '70%', marginBottom: 10 }} />
+        <Skeleton style={{ minHeight: 24, width: '50%' }} />
       </div>
     );
   }
@@ -102,7 +102,7 @@ function CodeforcesCard() {
 
   return (
     <motion.div
-      className="rounded-lg border border-white/8 bg-[#0d1117]/50 backdrop-blur-sm p-5 h-full relative overflow-hidden transition-all duration-300 hover:border-white/20 hover:shadow-[0_0_20px_rgba(99,102,241,0.1)]"
+      className="rounded-lg border border-white/8 bg-[#0d1117]/50 backdrop-blur-sm p-6 lg:p-8 h-full flex flex-col justify-center relative overflow-hidden transition-all duration-300 hover:border-white/20 hover:shadow-[0_0_20px_rgba(99,102,241,0.1)]"
       initial={{ opacity: 0, y: 16 }}
       whileInView={{ opacity: 1, y: 0 }}
       viewport={{ once: true }}
@@ -112,33 +112,33 @@ function CodeforcesCard() {
       <div className="absolute -top-12 -right-12 w-32 h-32 bg-blue-500/5 rounded-full blur-2xl pointer-events-none" />
 
       {/* Header */}
-      <div className="flex items-center gap-3 mb-4">
+      <div className="flex items-center gap-4 mb-6">
         {user.avatar && (
           <img
             src={user.avatar.startsWith('//') ? `https:${user.avatar}` : user.avatar}
             alt={user.handle}
-            className="w-9 h-9 rounded-full border border-white/10 object-cover"
+            className="w-12 h-12 rounded-full border border-white/10 object-cover"
           />
         )}
         <div className="min-w-0">
-          <div className="flex items-center gap-2">
-            <span className="font-bold text-white text-sm truncate">{user.handle}</span>
-            <span className={`text-[10px] font-mono px-1.5 py-0.5 rounded-full border border-white/10 bg-white/5 ${getRankColor(user.rank)}`}>
+          <div className="flex items-center gap-2 mb-1">
+            <span className="font-bold text-white text-lg truncate">{user.handle}</span>
+            <span className={`text-xs font-mono px-2 py-0.5 rounded-full border border-white/10 bg-white/5 ${getRankColor(user.rank)}`}>
               {user.rank}
             </span>
           </div>
-          <div className="text-[10px] font-mono text-gray-500">
+          <div className="text-xs font-mono text-gray-500">
             Max: <span className={getRankColor(user.maxRank)}>{user.maxRank}</span> · {user.friendOfCount} friends
           </div>
         </div>
       </div>
 
       {/* Stats grid */}
-      <div className="grid grid-cols-2 gap-2">
+      <div className="grid grid-cols-2 gap-3">
         {stats.map((s) => (
-          <div key={s.label} className="bg-white/[0.03] border border-white/5 rounded-md px-3 py-2">
-            <div className="text-[10px] font-mono text-gray-500 uppercase tracking-wider">{s.label}</div>
-            <div className={`text-lg font-bold ${s.color} leading-tight`}>{s.value}</div>
+          <div key={s.label} className="bg-white/[0.03] border border-white/5 rounded-md px-4 py-3">
+            <div className="text-xs font-mono text-gray-500 uppercase tracking-wider mb-1">{s.label}</div>
+            <div className={`text-2xl font-bold ${s.color} leading-tight`}>{s.value}</div>
           </div>
         ))}
       </div>
@@ -171,7 +171,7 @@ function LeetCodeCard() {
           loading="lazy"
           onLoad={() => setLoaded(true)}
           onError={() => { setError(true); setLoaded(true); }}
-          className={`w-full h-full object-contain block transition-all duration-500 group-hover:scale-[1.02] ${loaded ? 'opacity-100' : 'opacity-0'}`}
+          className={`w-full h-full object-cover block transition-all duration-500 group-hover:scale-[1.02] ${loaded ? 'opacity-100' : 'opacity-0'}`}
         />
       )}
     </motion.div>
@@ -217,7 +217,7 @@ export function CodingStats() {
           <span className="text-[10px] font-mono text-gray-500">LeetCode & Codeforces</span>
         </motion.div>
 
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-4 lg:gap-6">
           <LeetCodeCard />
           <CodeforcesCard />
         </div>
