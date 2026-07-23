@@ -9,14 +9,12 @@ interface LoaderProps {
 }
 
 const LOGS = [
-  { text: '> Booting up system...', status: '[OK]' },
-  { text: '> Loading modules...', status: '[OK]' },
-  { text: '> Checking dependencies...', status: '[OK]' },
-  { text: '> Setting up environment...', status: '[OK]' },
-  { text: '> Preparing ideas...', status: '[OK]' },
-  { text: '> Brewing creativity...', status: '[■■ ]' },
-  { text: '> Building experience...', status: '[■■■ ]' },
-  { text: '> Almost ready...', status: '[■■■■ ]' }
+  { text: '> waking developer........', status: '[OK]', statusClass: 'text-green-400', glitch: false },
+  { text: '> restoring unfinished ideas', status: '[OK]', statusClass: 'text-green-400', glitch: false },
+  { text: '> loading caffeine.dll.....', status: '[LOW]', statusClass: 'text-yellow-400', glitch: false },
+  { text: '> checking emotional stability', status: '[404]', statusClass: 'text-red-400', glitch: true },
+  { text: '> ignoring..................', status: '[OK]', statusClass: 'text-green-400', glitch: false },
+  { text: '> initializing kaustubh.....', status: '[OK]', statusClass: 'text-green-400', glitch: false },
 ];
 
 const CODE_TEXT = `const kaustubh = {\n  passion: "Code",\n  focus: "Backend",\n  goal: "Impact",\n  status: "Building..."\n}\n\nreturn <Experience />`;
@@ -80,7 +78,7 @@ function FloatingParticles() {
 // Removed ScanSweep
 
 // ─── Inner 3D Reactor Component ──────────────────────────────────────────────
-function ReactorCore({ phase, progress }: { phase: string; progress: number }) {
+function ReactorCore({ phase, progress, glitchActive }: { phase: string; progress: number; glitchActive: boolean }) {
   const groupRef  = useRef<THREE.Group>(null);
   const ring1Ref  = useRef<THREE.Mesh>(null);
   const ring2Ref  = useRef<THREE.Mesh>(null);
@@ -137,6 +135,13 @@ function ReactorCore({ phase, progress }: { phase: string; progress: number }) {
   useFrame((state, delta) => {
     const t = state.clock.elapsedTime;
 
+    // Glitch effect — random jitter on rings for 200ms
+    if (glitchActive) {
+      if (ring1Ref.current) ring1Ref.current.rotation.z += (Math.random() - 0.5) * 2;
+      if (ring2Ref.current) ring2Ref.current.rotation.z += (Math.random() - 0.5) * 2;
+      if (nodesRef.current) nodesRef.current.rotation.z += (Math.random() - 0.5) * 3;
+    }
+
     if (phase === 'init' || phase === 'scan') {
       if (groupRef.current) groupRef.current.scale.setScalar(0.001);
     } else if (phase === 'assembly') {
@@ -150,9 +155,12 @@ function ReactorCore({ phase, progress }: { phase: string; progress: number }) {
 
       const pulse = Math.sin(t * 5) * 0.5 + 0.5;
       neonBrightMat.opacity = 0.8 + pulse * 0.2 + (progress / 100) * 0.5;
-      // Pulsing scan ring
       if (scanMat) scanMat.opacity = 0.05 + Math.sin(t * 2) * 0.1;
     } else if (phase === 'transition') {
+      // Launch: rings spin insanely fast then freeze
+      if (ring1Ref.current) ring1Ref.current.rotation.z -= delta * 15;
+      if (ring2Ref.current) ring2Ref.current.rotation.z += delta * 20;
+      if (nodesRef.current) nodesRef.current.rotation.z += delta * 25;
       if (groupRef.current) {
         groupRef.current.scale.lerp(new THREE.Vector3(30, 30, 30), 0.05);
         groupRef.current.position.z += delta * 5;
@@ -236,6 +244,7 @@ export function Loader({ onComplete }: LoaderProps) {
   const [phase, setPhase] = useState<'init' | 'scan' | 'assembly' | 'active' | 'sync' | 'transition'>('init');
   const [logIndex, setLogIndex] = useState(-1);
   const [progress, setProgress] = useState(0);
+  const [glitchActive, setGlitchActive] = useState(false);
   const audioRef = useRef<HTMLAudioElement | null>(null);
 
   const typedCode = useTypewriter(CODE_TEXT, 30, phase === 'active' || phase === 'sync');
@@ -360,6 +369,11 @@ export function Loader({ onComplete }: LoaderProps) {
       let currentLog = 0;
       const lInt = setInterval(() => {
         setLogIndex(currentLog);
+        // Trigger glitch effect for logs marked with glitch: true
+        if (LOGS[currentLog]?.glitch) {
+          setGlitchActive(true);
+          setTimeout(() => setGlitchActive(false), 200);
+        }
         currentLog++;
         if (currentLog >= LOGS.length) clearInterval(lInt);
       }, logInterval);
@@ -434,7 +448,7 @@ export function Loader({ onComplete }: LoaderProps) {
       {/* Central 3D Reactor */}
       <div className="absolute inset-0 z-0">
         <Canvas camera={{ position: [0, 0, 10], fov: 45 }} gl={{ alpha: true, antialias: true }}>
-          <ReactorCore phase={phase} progress={progress} />
+          <ReactorCore phase={phase} progress={progress} glitchActive={glitchActive} />
         </Canvas>
       </div>
 
@@ -505,8 +519,8 @@ export function Loader({ onComplete }: LoaderProps) {
                 >
                   <span className="text-gray-400">{log.text}</span>
                   <motion.span
-                    className={log.status.includes('■') ? 'text-primary drop-shadow-[0_0_5px_#a855f7]' : 'text-green-400'}
-                    animate={i === logIndex && !log.status.includes('■') ? { opacity: [0, 1, 0.7, 1] } : {}}
+                    className={`${log.statusClass} ${log.glitch ? 'drop-shadow-[0_0_5px_#ef4444]' : ''}`}
+                    animate={i === logIndex ? { opacity: [0, 1, 0.7, 1] } : {}}
                     transition={{ duration: 0.4 }}
                   >
                     {log.status}
@@ -605,7 +619,7 @@ export function Loader({ onComplete }: LoaderProps) {
               animate={{ opacity: [1, 0.5, 1] }}
               transition={{ duration: 1.5, repeat: Infinity }}
             >
-              {phase === 'sync' ? 'CORE SYNCHRONIZED' : 'SYSTEM INITIALIZING'}
+              {phase === 'transition' ? 'WELCOME, HUMAN' : phase === 'sync' ? 'IDENTITY VERIFIED' : 'SYSTEM INITIALIZING'}
             </motion.span>
             <div className="flex gap-2">
               <div className="w-1 h-1 bg-primary rounded-full animate-ping" />

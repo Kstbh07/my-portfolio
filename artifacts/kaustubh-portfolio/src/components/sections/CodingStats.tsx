@@ -21,8 +21,71 @@ function Skeleton({ className = '', style }: { className?: string; style?: React
 
 /* ─── Compact stat card (for GitHub SVG cards) ─── */
 function CompactCard({ src, alt, delay = 0 }: { src: string; alt: string; delay?: number }) {
-  const [loaded, setLoaded] = useState(false);
-  const [error, setError] = useState(false);
+  const [status, setStatus] = useState<'loading' | 'loaded' | 'error'>('loading');
+  const [currentSrc, setCurrentSrc] = useState<string | null>(null);
+  
+  const retryCount = React.useRef(0);
+  const fallbackAttempted = React.useRef(false);
+
+  useEffect(() => {
+    setStatus('loading');
+    retryCount.current = 0;
+    fallbackAttempted.current = false;
+    
+    let initialSrc = src;
+    try {
+      const cacheKey = `gh-card-${btoa(alt).slice(0, 12)}`;
+      const cached = localStorage.getItem(cacheKey);
+      if (cached) {
+        const parsed = JSON.parse(cached);
+        const age = Date.now() - parsed.timestamp;
+        if (age < 30 * 60 * 1000) {
+          initialSrc = `${src}&_t=${Date.now()}`;
+        }
+      }
+    } catch (e) {}
+    
+    setCurrentSrc(initialSrc);
+  }, [src, alt]);
+
+  const handleLoad = () => {
+    setStatus('loaded');
+    try {
+      const cacheKey = `gh-card-${btoa(alt).slice(0, 12)}`;
+      localStorage.setItem(cacheKey, JSON.stringify({ src, timestamp: Date.now() }));
+    } catch (e) {}
+  };
+
+  const handleError = () => {
+    const delays = [2000, 4000, 8000];
+    
+    if (retryCount.current < delays.length) {
+      const delayMs = delays[retryCount.current];
+      retryCount.current += 1;
+      setTimeout(() => {
+        setCurrentSrc(`${src}&_t=${Date.now()}`);
+      }, delayMs);
+      return;
+    }
+    
+    if (!fallbackAttempted.current) {
+      fallbackAttempted.current = true;
+      try {
+        const cacheKey = `gh-card-${btoa(alt).slice(0, 12)}`;
+        const cached = localStorage.getItem(cacheKey);
+        if (cached) {
+          const parsed = JSON.parse(cached);
+          const age = Date.now() - parsed.timestamp;
+          if (age < 24 * 60 * 60 * 1000) {
+            setCurrentSrc(src);
+            return;
+          }
+        }
+      } catch (e) {}
+    }
+    
+    setStatus('error');
+  };
 
   return (
     <motion.div
@@ -32,20 +95,25 @@ function CompactCard({ src, alt, delay = 0 }: { src: string; alt: string; delay?
       viewport={{ once: true, margin: '-20px' }}
       transition={{ duration: 0.4, delay }}
     >
-      {!loaded && <Skeleton className="absolute inset-0 z-10" />}
-      {error ? (
-        <div className="flex items-center justify-center h-[120px] text-gray-600 font-mono text-xs">
-          Failed to load
+      {status === 'loading' && <Skeleton className="absolute inset-0 z-10" />}
+      {status === 'error' ? (
+        <div className="relative flex items-center justify-center h-full min-h-[120px] w-full">
+          <Skeleton className="absolute inset-0 z-0" />
+          <span className="relative z-10 text-gray-400 font-mono text-xs px-4 text-center">
+            GitHub activity is temporarily unavailable.
+          </span>
         </div>
       ) : (
-        <img
-          src={src}
-          alt={alt}
-          loading="lazy"
-          onLoad={() => setLoaded(true)}
-          onError={() => { setError(true); setLoaded(true); }}
-          className={`w-full h-auto block transition-all duration-500 group-hover:scale-[1.02] ${loaded ? 'opacity-100' : 'opacity-0'}`}
-        />
+        currentSrc && (
+          <img
+            src={currentSrc}
+            alt={alt}
+            loading="lazy"
+            onLoad={handleLoad}
+            onError={handleError}
+            className={`w-full h-auto block transition-all duration-500 group-hover:scale-[1.02] ${status === 'loaded' ? 'opacity-100' : 'opacity-0'}`}
+          />
+        )
       )}
     </motion.div>
   );
