@@ -1,122 +1,11 @@
 import React, { useState, useCallback, useEffect } from 'react';
 import { motion } from 'framer-motion';
 
-const GITHUB_USERNAME = 'Kstbh07';
-const THEME = 'tokyonight';
-
-const githubCards = {
-  profileDetails: `https://github-profile-summary-cards.vercel.app/api/cards/profile-details?username=${GITHUB_USERNAME}&theme=${THEME}`,
-  reposPerLanguage: `https://github-profile-summary-cards.vercel.app/api/cards/repos-per-language?username=${GITHUB_USERNAME}&theme=${THEME}`,
-  mostCommitLanguage: `https://github-profile-summary-cards.vercel.app/api/cards/most-commit-language?username=${GITHUB_USERNAME}&theme=${THEME}`,
-  stats: `https://github-profile-summary-cards.vercel.app/api/cards/stats?username=${GITHUB_USERNAME}&theme=${THEME}`,
-  productiveTime: `https://github-profile-summary-cards.vercel.app/api/cards/productive-time?username=${GITHUB_USERNAME}&theme=${THEME}&utcOffset=5.5`,
-};
-
 const LEETCODE_CARD_URL = 'https://leetcard.jacoblin.cool/kstbh07?theme=dark&font=Karma';
 
 /* ─── Skeleton ─── */
 function Skeleton({ className = '', style }: { className?: string; style?: React.CSSProperties }) {
   return <div className={`animate-pulse rounded-lg bg-white/5 ${className}`} style={{ minHeight: 120, ...style }} />;
-}
-
-/* ─── Compact stat card (for GitHub SVG cards) ─── */
-function CompactCard({ src, alt, delay = 0 }: { src: string; alt: string; delay?: number }) {
-  const [status, setStatus] = useState<'loading' | 'loaded' | 'error'>('loading');
-  const [currentSrc, setCurrentSrc] = useState<string | null>(null);
-  
-  const retryCount = React.useRef(0);
-  const fallbackAttempted = React.useRef(false);
-
-  useEffect(() => {
-    setStatus('loading');
-    retryCount.current = 0;
-    fallbackAttempted.current = false;
-    
-    let initialSrc = src;
-    try {
-      const cacheKey = `gh-card-${btoa(alt).slice(0, 12)}`;
-      const cached = localStorage.getItem(cacheKey);
-      if (cached) {
-        const parsed = JSON.parse(cached);
-        const age = Date.now() - parsed.timestamp;
-        if (age < 30 * 60 * 1000) {
-          initialSrc = `${src}&_t=${Date.now()}`;
-        }
-      }
-    } catch (e) {}
-    
-    setCurrentSrc(initialSrc);
-  }, [src, alt]);
-
-  const handleLoad = () => {
-    setStatus('loaded');
-    try {
-      const cacheKey = `gh-card-${btoa(alt).slice(0, 12)}`;
-      localStorage.setItem(cacheKey, JSON.stringify({ src, timestamp: Date.now() }));
-    } catch (e) {}
-  };
-
-  const handleError = () => {
-    const delays = [2000, 4000, 8000];
-    
-    if (retryCount.current < delays.length) {
-      const delayMs = delays[retryCount.current];
-      retryCount.current += 1;
-      setTimeout(() => {
-        setCurrentSrc(`${src}&_t=${Date.now()}`);
-      }, delayMs);
-      return;
-    }
-    
-    if (!fallbackAttempted.current) {
-      fallbackAttempted.current = true;
-      try {
-        const cacheKey = `gh-card-${btoa(alt).slice(0, 12)}`;
-        const cached = localStorage.getItem(cacheKey);
-        if (cached) {
-          const parsed = JSON.parse(cached);
-          const age = Date.now() - parsed.timestamp;
-          if (age < 24 * 60 * 60 * 1000) {
-            setCurrentSrc(src);
-            return;
-          }
-        }
-      } catch (e) {}
-    }
-    
-    setStatus('error');
-  };
-
-  return (
-    <motion.div
-      className="relative overflow-hidden rounded-lg border border-white/8 bg-[#0d1117]/50 backdrop-blur-sm transition-all duration-300 hover:border-white/20 hover:shadow-[0_0_20px_rgba(99,102,241,0.1)] group"
-      initial={{ opacity: 0, y: 16 }}
-      whileInView={{ opacity: 1, y: 0 }}
-      viewport={{ once: true, margin: '-20px' }}
-      transition={{ duration: 0.4, delay }}
-    >
-      {status === 'loading' && <Skeleton className="absolute inset-0 z-10" />}
-      {status === 'error' ? (
-        <div className="relative flex items-center justify-center h-full min-h-[120px] w-full">
-          <Skeleton className="absolute inset-0 z-0" />
-          <span className="relative z-10 text-gray-400 font-mono text-xs px-4 text-center">
-            GitHub activity is temporarily unavailable.
-          </span>
-        </div>
-      ) : (
-        currentSrc && (
-          <img
-            src={currentSrc}
-            alt={alt}
-            loading="lazy"
-            onLoad={handleLoad}
-            onError={handleError}
-            className={`w-full h-auto block transition-all duration-500 group-hover:scale-[1.02] ${status === 'loaded' ? 'opacity-100' : 'opacity-0'}`}
-          />
-        )
-      )}
-    </motion.div>
-  );
 }
 
 /* ─── Codeforces live card ─── */
@@ -312,35 +201,8 @@ export function CodingStats() {
             viewport={{ once: true }}
             transition={{ delay: 0.15 }}
           >
-            Real-time stats from GitHub, LeetCode & Codeforces.
+            Real-time stats from LeetCode & Codeforces.
           </motion.p>
-        </div>
-
-        {/* ── GitHub Section ── */}
-        <motion.div
-          className="flex items-center gap-2 mb-3"
-          initial={{ opacity: 0, x: -12 }}
-          whileInView={{ opacity: 1, x: 0 }}
-          viewport={{ once: true }}
-        >
-          <svg viewBox="0 0 24 24" width="16" height="16" fill="currentColor" className="text-white/70"><path d="M12 0C5.37 0 0 5.37 0 12c0 5.3 3.438 9.8 8.205 11.387.6.113.82-.258.82-.577 0-.285-.01-1.04-.015-2.04-3.338.724-4.042-1.61-4.042-1.61C4.422 17.07 3.633 16.7 3.633 16.7c-1.087-.744.084-.729.084-.729 1.205.084 1.838 1.236 1.838 1.236 1.07 1.835 2.809 1.305 3.495.998.108-.776.417-1.305.76-1.605-2.665-.3-5.466-1.332-5.466-5.93 0-1.31.465-2.38 1.235-3.22-.135-.303-.54-1.523.105-3.176 0 0 1.005-.322 3.3 1.23.96-.267 1.98-.399 3-.405 1.02.006 2.04.138 3 .405 2.28-1.552 3.285-1.23 3.285-1.23.645 1.653.24 2.873.12 3.176.765.84 1.23 1.91 1.23 3.22 0 4.61-2.805 5.625-5.475 5.92.42.36.81 1.096.81 2.22 0 1.605-.015 2.896-.015 3.286 0 .315.21.694.825.576C20.565 21.795 24 17.295 24 12c0-6.63-5.37-12-12-12z"/></svg>
-          <span className="text-sm font-semibold text-white/80">GitHub</span>
-          <span className="text-[10px] font-mono text-gray-500">@{GITHUB_USERNAME}</span>
-        </motion.div>
-
-        {/* Profile Details — centered, capped width */}
-        <div className="flex justify-center mb-3">
-          <div className="w-full max-w-[950px]">
-            <CompactCard src={githubCards.profileDetails} alt="GitHub Profile Details" delay={0.05} />
-          </div>
-        </div>
-
-        {/* 2×2 grid */}
-        <div className="grid grid-cols-2 md:grid-cols-4 gap-2.5 mb-12">
-          <CompactCard src={githubCards.reposPerLanguage} alt="Repos per Language" delay={0.08} />
-          <CompactCard src={githubCards.mostCommitLanguage} alt="Most Commit Language" delay={0.11} />
-          <CompactCard src={githubCards.stats} alt="GitHub Stats" delay={0.14} />
-          <CompactCard src={githubCards.productiveTime} alt="Productive Time" delay={0.17} />
         </div>
 
         {/* ── LeetCode + Codeforces ── */}
