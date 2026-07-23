@@ -1,5 +1,7 @@
-import React, { useState, useCallback, useEffect } from 'react';
+import React, { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
+import { ActivityDashboard } from '../ui/ActivityDashboard';
+import { DeveloperDNA } from '../ui/DeveloperDNA';
 
 const LEETCODE_CARD_URL = 'https://leetcard.jacoblin.cool/kstbh07?theme=dark&font=Karma';
 
@@ -76,7 +78,7 @@ function CodeforcesCard() {
 
   if (loading) {
     return (
-      <div className="rounded-lg border border-white/8 bg-[#0d1117]/50 backdrop-blur-sm p-6 lg:p-8 h-full flex flex-col justify-center">
+      <div className="rounded-lg border border-white/8 bg-[#0d1117]/50 backdrop-blur-sm p-6 h-full flex flex-col justify-center">
         <Skeleton style={{ minHeight: 48, width: '60%', marginBottom: 16 }} />
         <Skeleton style={{ minHeight: 24, width: '80%', marginBottom: 10 }} />
         <Skeleton style={{ minHeight: 24, width: '70%', marginBottom: 10 }} />
@@ -102,7 +104,7 @@ function CodeforcesCard() {
 
   return (
     <motion.div
-      className="rounded-lg border border-white/8 bg-[#0d1117]/50 backdrop-blur-sm p-6 lg:p-8 h-full flex flex-col justify-center relative overflow-hidden transition-all duration-300 hover:border-white/20 hover:shadow-[0_0_20px_rgba(99,102,241,0.1)]"
+      className="rounded-lg border border-white/8 bg-[#0d1117]/50 backdrop-blur-sm p-6 h-full flex flex-col justify-center relative overflow-hidden transition-all duration-300 hover:border-white/20 hover:shadow-[0_0_20px_rgba(99,102,241,0.1)]"
       initial={{ opacity: 0, y: 16 }}
       whileInView={{ opacity: 1, y: 0 }}
       viewport={{ once: true }}
@@ -112,33 +114,33 @@ function CodeforcesCard() {
       <div className="absolute -top-12 -right-12 w-32 h-32 bg-blue-500/5 rounded-full blur-2xl pointer-events-none" />
 
       {/* Header */}
-      <div className="flex items-center gap-4 mb-6">
+      <div className="flex items-center gap-4 mb-4">
         {user.avatar && (
           <img
             src={user.avatar.startsWith('//') ? `https:${user.avatar}` : user.avatar}
             alt={user.handle}
-            className="w-12 h-12 rounded-full border border-white/10 object-cover"
+            className="w-10 h-10 rounded-full border border-white/10 object-cover"
           />
         )}
         <div className="min-w-0">
           <div className="flex items-center gap-2 mb-1">
-            <span className="font-bold text-white text-lg truncate">{user.handle}</span>
-            <span className={`text-xs font-mono px-2 py-0.5 rounded-full border border-white/10 bg-white/5 ${getRankColor(user.rank)}`}>
+            <span className="font-bold text-white text-base truncate">{user.handle}</span>
+            <span className={`text-[10px] font-mono px-2 py-0.5 rounded-full border border-white/10 bg-white/5 ${getRankColor(user.rank)}`}>
               {user.rank}
             </span>
           </div>
-          <div className="text-xs font-mono text-gray-500">
+          <div className="text-[10px] font-mono text-gray-500">
             Max: <span className={getRankColor(user.maxRank)}>{user.maxRank}</span> · {user.friendOfCount} friends
           </div>
         </div>
       </div>
 
       {/* Stats grid */}
-      <div className="grid grid-cols-2 gap-3">
+      <div className="grid grid-cols-2 gap-2">
         {stats.map((s) => (
-          <div key={s.label} className="bg-white/[0.03] border border-white/5 rounded-md px-4 py-3">
-            <div className="text-xs font-mono text-gray-500 uppercase tracking-wider mb-1">{s.label}</div>
-            <div className={`text-2xl font-bold ${s.color} leading-tight`}>{s.value}</div>
+          <div key={s.label} className="bg-white/[0.03] border border-white/5 rounded-md px-3 py-2">
+            <div className="text-[10px] font-mono text-gray-500 uppercase tracking-wider mb-0.5">{s.label}</div>
+            <div className={`text-xl font-bold ${s.color} leading-tight`}>{s.value}</div>
           </div>
         ))}
       </div>
@@ -153,7 +155,7 @@ function LeetCodeCard() {
 
   return (
     <motion.div
-      className="relative overflow-hidden rounded-lg border border-white/8 bg-[#0d1117]/50 backdrop-blur-sm transition-all duration-300 hover:border-white/20 hover:shadow-[0_0_20px_rgba(99,102,241,0.1)] h-full group"
+      className="relative overflow-hidden rounded-lg border border-white/8 bg-[#0d1117]/50 backdrop-blur-sm transition-all duration-300 hover:border-white/20 hover:shadow-[0_0_20px_rgba(99,102,241,0.1)] h-full group flex items-center justify-center"
       initial={{ opacity: 0, y: 16 }}
       whileInView={{ opacity: 1, y: 0 }}
       viewport={{ once: true }}
@@ -171,7 +173,7 @@ function LeetCodeCard() {
           loading="lazy"
           onLoad={() => setLoaded(true)}
           onError={() => { setError(true); setLoaded(true); }}
-          className={`w-full h-full object-cover block transition-all duration-500 group-hover:scale-[1.02] ${loaded ? 'opacity-100' : 'opacity-0'}`}
+          className={`w-full h-full object-contain block transition-opacity duration-500 ${loaded ? 'opacity-100' : 'opacity-0'}`}
         />
       )}
     </motion.div>
@@ -182,7 +184,7 @@ function LeetCodeCard() {
 export function CodingStats() {
   return (
     <section id="coding-stats" className="py-16 relative">
-      <div className="container mx-auto px-6 lg:pl-24 relative z-10 w-full max-w-[1100px]">
+      <div className="container mx-auto px-6 relative z-10 w-full max-w-7xl">
 
         {/* ── Header ── */}
         <div className="flex flex-col items-center mb-10">
@@ -194,35 +196,22 @@ export function CodingStats() {
           >
             Live <span className="text-primary">Coding Stats</span>
           </motion.h2>
-          <motion.p
-            className="text-gray-400 font-mono text-xs mt-3 text-center"
-            initial={{ opacity: 0 }}
-            whileInView={{ opacity: 1 }}
-            viewport={{ once: true }}
-            transition={{ delay: 0.15 }}
-          >
-            Real-time stats from LeetCode & Codeforces.
-          </motion.p>
         </div>
 
         {/* ── LeetCode + Codeforces ── */}
-        <motion.div
-          className="flex items-center gap-2 mb-3"
-          initial={{ opacity: 0, x: -12 }}
-          whileInView={{ opacity: 1, x: 0 }}
-          viewport={{ once: true }}
-        >
-          <svg viewBox="0 0 24 24" width="16" height="16" fill="currentColor" className="text-yellow-500/70"><path d="M13.483 0a1.374 1.374 0 0 0-.961.438L7.116 6.226l-3.854 4.126a5.266 5.266 0 0 0-1.209 2.104 5.35 5.35 0 0 0-.125.513 5.527 5.527 0 0 0 .062 2.362 5.83 5.83 0 0 0 .349 1.017 5.938 5.938 0 0 0 1.271 1.818l4.277 4.193.039.038c2.248 2.165 5.852 2.133 8.063-.074l2.396-2.392c.54-.54.54-1.414.003-1.955a1.378 1.378 0 0 0-1.951-.003l-2.396 2.392a3.021 3.021 0 0 1-4.205.038l-.02-.019-4.276-4.193c-.652-.64-.972-1.469-.948-2.263a2.68 2.68 0 0 1 .066-.523 2.545 2.545 0 0 1 .619-1.164L9.13 8.114c1.058-1.134 3.204-1.27 4.43-.278l.842.691c.63.516 1.543.439 2.059-.19a1.379 1.379 0 0 0-.19-2.06l-.842-.69a5.323 5.323 0 0 0-2.035-1.076 5.26 5.26 0 0 0-1.18-.276 4.928 4.928 0 0 0-.733.009 1.37 1.37 0 0 0 .002-1.244l1.145-1.18A1.374 1.374 0 0 0 13.483 0z"/></svg>
-          <span className="text-sm font-semibold text-white/80">Competitive</span>
-          <span className="text-[10px] font-mono text-gray-500">LeetCode & Codeforces</span>
-        </motion.div>
-
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-4 lg:gap-6">
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 lg:gap-6 mb-12">
           <LeetCodeCard />
           <CodeforcesCard />
         </div>
+
+        {/* ── Activity Dashboard (Heatmap + Score) ── */}
+        <ActivityDashboard />
+
+        {/* ── Developer DNA (Conclusion) ── */}
+        <DeveloperDNA />
 
       </div>
     </section>
   );
 }
+
